@@ -2,3 +2,4 @@ streamlit==1.26.0
 sudachipy==0.6.7
 sudachidict_core
 matplotlib
+networkx==3.1
