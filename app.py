@@ -12,6 +12,7 @@ from count_pos_frequency_1 import count_pos_frequency
 import matplotlib.pyplot as plt
 from matplotlib.font_manager import FontProperties
 from networkx_1 import make_network
+from tone import tone_score,tone_eval
 
 st.title("ネコでも使える！テキスト分析（β版）") # タイトル
 st.write("少しずつ機能を追加していきたいと思います。")
@@ -128,7 +129,18 @@ user_input = user_input_text
 if user_input:
     network = make_network(user_input,slider_value)
     st.pyplot(network)
+#%%
+# トーンスコア
+st.title("ステップ６　トーン")
+st.write("トーンは－1（超ネガティブ）から1（超ポジティブ）で計算されます。0は中立（ニュートラル）となります。 文章のトーンはどのくらいポジティブ（ネガティブ）でしょうか？")
 
+if user_input:
+    score,nofpword,nofnword = tone_score(user_input)
+    evaluation = tone_eval(score)
+    #st.write(f"ポジティブワード： {nofpword}")
+    #st.write(f"ネガティブワード： {nofnword}")
+    st.write(f"トーンスコア： {score}")
+    st.write(f"トーンレベル： {evaluation}")
 
 st.write("【サイト運営者】")
 st.write("青山学院大学　経営学部　矢澤憲一研究室")
