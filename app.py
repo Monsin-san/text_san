@@ -4,6 +4,10 @@ streamlit run D:\GoogleDrive\python\python_code\streamlit_app_2\app.py
 
 import streamlit as st
 from PIL import Image
+from sudachipy import Dictionary
+import base64
+import base64
+import re
 
 st.title("ネコでも使える！テキスト分析（β版）") # タイトル
 st.write("少しずつ機能を追加していきたいと思います。")
@@ -23,8 +27,8 @@ st.write("テキストマイニングとは、簡単に言えば、大量のテ�
 st.title("準備")
 st.write("下記のボックスに文章を入力してみましょう！サンプルデータを用意していますのでコピー＆ペーストしてください。")
 
-#mecab = MeCab.Tagger(r"-Owakati -d D:\GoogleDrive\python\python_code\streamlit_app_practice\neologd -u D:\GoogleDrive\python\python_code\streamlit_app_practice\user.dic")
-mecab = MeCab.Tagger(r"-Owakati")
+# SudachiPyの辞書を初期化
+dictionary = Dictionary().create()
 
 # ユーザーに文章を入力してもらう
 user_input_text = st.text_area("文章を入力してください:")
@@ -45,3 +49,22 @@ st.markdown(f"【トヨタ自動車　2023年3月期　決算短信】　 {get_t
 
 st.title("ステップ１　文字数、単語数、文章数")
 st.write("まずは入力した文章の文字数、単語数、文章数が出力されますので確認してください。文章は長いですか、それとも短いですか？文字数と単語数の割合などどうなっていますか？")
+
+# テキストが入力された場合の処理
+if user_input_text:
+    user_input_text = user_input_text.translate(str.maketrans({chr(0xFF01 + i): chr(0x21 + i) for i in range(len(user_input_text))}))
+    user_input_text = user_input_text.replace("キャッシュ・フロー","キャッシュフロー")
+
+    # 文字数をカウント
+    char_count = len(user_input_text)
+    st.write(f'文字数： {char_count} 字')
+
+    # 単語数をカウント
+    tokens = dictionary.tokenize(user_input_text)
+    word_count = len(tokens)
+    st.write(f'単語数： {word_count} 語')
+
+    # 文章数をカウント
+    sentence_count = len(re.split('[。.!?]', user_input_text)) - 1
+    st.write(f'文章数： {sentence_count} 文')
+
