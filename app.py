@@ -13,6 +13,8 @@ import matplotlib.pyplot as plt
 from matplotlib.font_manager import FontProperties
 from networkx_1 import make_network
 from tone import tone_score,tone_eval
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
 
 st.title("ネコでも使える！テキスト分析（β版）") # タイトル
 st.write("少しずつ機能を追加していきたいと思います。")
@@ -147,6 +149,65 @@ if user_input:
     #st.write(f"ネガティブワード： {nofnword}")
     st.write(f"トーンスコア： {score}")
     st.write(f"トーンレベル： {evaluation}")
+
+# タイトルを設定
+st.title('ステップ７　文章の類似度')
+st.write("下記のボックスに2つの文章を入力すると、文章Aと文章Bが似ているかどうかを計算することができます。類似度は0（まったく似ていない）から1（完全に同じ）で計算されます。 ")
+
+st.write("それでは文章Aには先ほどのテキストデータ（トヨタ自動車2023年3月期）、文章Bには同社の前決算期（2022年3月期）のデータを下記のダウンロードリンクからコピー＆ペーストしてください。 ")
+
+# ユーザーに文章Aを入力してもらう
+text_A = st.text_area("文章Aを入力してください:")
+
+# ユーザーに文章Bを入力してもらう
+text_B = st.text_area("文章Bを入力してください:")
+
+# テキストファイルを読み込む
+with open("sample_B.txt", "r", encoding="utf-8") as B:
+    text_content_b = B.read()
+
+# テキストファイルをダウンロードするための関数
+def get_text_download_link_b(text, filename):
+    """Generates a link allowing the text to be downloaded"""
+    b64 = base64.b64encode(text.encode()).decode()  # 文字をbase64エンコードする
+    return f'<a href="data:file/txt;base64,{b64}" download="{filename}">Download text file</a>'
+
+# テキストファイルのダウンロードリンクを作成
+st.write("サンプルテキスト")
+st.markdown(f"【トヨタ自動車　2022年3月期　決算短信】　 {get_text_download_link(text_content_b, 'sample_B.txt')} ", unsafe_allow_html=True)
+
+# Function to evaluate readability score
+def evaluate_sim(cos_sim):
+    if cos_sim < 0.2:
+        return "全然似てない"
+    elif cos_sim < 0.4:
+        return "あんまり似てない"
+    elif cos_sim < 0.6:
+        return "ちょっと似てる？"
+    elif cos_sim < 0.8:
+        return "まあまあ似ている"
+    else:
+        return "超そっくり"
+    
+# 両方のテキストが入力された場合、類似度を計算
+if text_A and text_B:
+    # TF-IDFベクトルを計算
+    vectorizer = TfidfVectorizer()
+    tfidf_matrix = vectorizer.fit_transform([text_A, text_B])
+
+    # コサイン類似度を計算
+    cos_sim = cosine_similarity(tfidf_matrix[0:1], tfidf_matrix[1:2])[0][0]
+    cos_sim = round(cos_sim,3)
+    
+    # 類似度を表示
+    st.write(f'類似度: {cos_sim}')
+    evaluation = evaluate_sim(cos_sim)
+    st.write(f'そっくりレベル: {evaluation}')
+
+st.write("２つの文章はどのくらい似ていますか？なぜ似ている（似ていない）のか自分でも考えてみましょう。")
+
+st.title('おわりに')
+st.write("テキスト分析はいかがでしたでしょうか？次はぜひ自分の興味のある文章を入れて結果を確かめてみましょう！")
 
 st.write("【サイト運営者】")
 st.write("青山学院大学　経営学部　矢澤憲一研究室")
