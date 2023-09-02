@@ -17,7 +17,7 @@ st.title("ネコでも使える！テキスト分析（β版）") # タイトル
 st.write("少しずつ機能を追加していきたいと思います。")
 
 #image = Image.open("title.png")
-image = Image.open(r"D:\GoogleDrive\python\python_code\streamlit_app_2\title.png")
+image = Image.open("title.png")
 st.image(image,use_column_width=True)
 
 st.write("私の研究室では「会計・財務研究におけるテキスト分析」に取り組んでいます。研究活動の一環として、テキスト分析の魅力を体感できるウェブサイトを作成しました。肩の力を抜いてお楽しみください！")
@@ -39,7 +39,7 @@ dictionary = Dictionary().create()
 user_input_text = st.text_area("文章を入力してください:")
 
 # テキストファイルを読み込む
-with open("D:\GoogleDrive\python\python_code\streamlit_app_2\sample_A.txt", "r", encoding="utf-8") as f:
+with open("sample_A.txt", "r", encoding="utf-8") as f:
     text_content = f.read()
 
 # テキストファイルをダウンロードするための関数
@@ -80,7 +80,7 @@ st.write("続いて単語の出現頻度を分析してみましょう。下の�
 selected_pos = st.selectbox("カウントする品詞を選んでください:", ("名詞", "動詞", "形容詞"), key='my_unique_selectbox_key')
 
 # グラフのフォントを設定
-fontprop = FontProperties(fname=r"D:\GoogleDrive\python\python_code\streamlit_app_2\MEIRYO.TTC")  # フォントのパスを適宜変更
+fontprop = FontProperties(fname="MEIRYO.TTC")  # フォントのパスを適宜変更
 
 # 以下、コードの一部をSudachiPyに対応させたもの
 if user_input_text:
