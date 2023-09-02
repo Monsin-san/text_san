@@ -1,7 +1,6 @@
 '''
 streamlit run D:\GoogleDrive\python\python_code\streamlit_app_2\app.py
 '''
-
 import streamlit as st
 from PIL import Image
 from sudachipy import Dictionary
@@ -78,7 +77,7 @@ st.write("続いて単語の出現頻度を分析してみましょう。下の�
 selected_pos = st.selectbox("カウントする品詞を選んでください:", ("名詞", "動詞", "形容詞"), key='my_unique_selectbox_key')
 
 # グラフのフォントを設定
-fontprop = FontProperties(fname=r"D:\GoogleDrive\python\python_code\streamlit_app_2\MEIRYO.TTC")  # フォントのパスを適宜変更
+fontprop = FontProperties(fname="MEIRYO.TTC")  # フォントのパスを適宜変更
 
 # 以下、コードの一部をSudachiPyに対応させたもの
 if user_input_text:
