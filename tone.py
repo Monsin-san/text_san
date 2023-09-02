@@ -4,7 +4,7 @@ from sudachipy import Dictionary
 
 # %%
 def tone_score(text):
-    with open("D:\\GoogleDrive\\python\\python_code\\streamlit_app_practice\\mlwordlist.csv", 'r', encoding="utf-8") as csv_file:
+    with open("mlwordlist.csv", 'r', encoding="utf-8") as csv_file:
         pdlist = pd.read_csv(csv_file)
     plist = pdlist['positive'].values
     nlist = pdlist['negative'].values
