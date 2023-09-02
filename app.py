@@ -6,8 +6,10 @@ import streamlit as st
 from PIL import Image
 from sudachipy import Dictionary
 import base64
-import base64
 import re
+from count_pos_frequency_1 import count_pos_frequency
+import matplotlib.pyplot as plt
+from matplotlib.font_manager import FontProperties
 
 st.title("ネコでも使える！テキスト分析（β版）") # タイトル
 st.write("少しずつ機能を追加していきたいと思います。")
@@ -68,3 +70,42 @@ if user_input_text:
     sentence_count = len(re.split('[。.!?]', user_input_text)) - 1
     st.write(f'文章数： {sentence_count} 文')
 
+
+# Streamlitのインターフェイス
+st.title("ステップ２　単語の出現頻度")
+st.write("続いて単語の出現頻度を分析してみましょう。下のボックスからカウントしたい品詞を選択してください。どのような単語が多く使われているでしょうか？")
+
+selected_pos = st.selectbox("カウントする品詞を選んでください:", ("名詞", "動詞", "形容詞"), key='my_unique_selectbox_key')
+
+# グラフのフォントを設定
+fontprop = FontProperties(fname=r"D:\GoogleDrive\python\python_code\streamlit_app_2\MEIRYO.TTC")  # フォントのパスを適宜変更
+
+# 以下、コードの一部をSudachiPyに対応させたもの
+if user_input_text:
+    pos_freq = count_pos_frequency(user_input_text, selected_pos)
+    st.write(f'{selected_pos}の出現頻度')
+    st.write(pos_freq)
+
+    # グラフの描画
+    if pos_freq:
+        fig, ax = plt.subplots()
+
+        # 頻度でソート
+        sorted_pos_freq = pos_freq.most_common(10)
+        words = [item[0] for item in sorted_pos_freq]
+        counts = [item[1] for item in sorted_pos_freq]
+
+        # y軸を逆順にして描画
+        ax.barh(words[::-1], counts[::-1])
+
+        ax.set_xlabel('出現回数', fontproperties=fontprop)
+
+        # タイトルにフォントを設定
+        ax.set_title(f'{selected_pos}の出現頻度', fontproperties=fontprop)
+
+        # グラフにフォントを設定して描画
+        ax.set_yticklabels(words[::-1], fontproperties=fontprop)  # y軸のラベルに日本語フォントを設定
+        plt.tight_layout()
+
+        # Streamlitで表示
+        st.pyplot(fig)
