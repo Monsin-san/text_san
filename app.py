@@ -129,6 +129,12 @@ user_input = user_input_text
 if user_input:
     network = make_network(user_input,slider_value)
     st.pyplot(network)
+
+st.write("続いて、文章がどの程度わかりやすいか（＝可読性）、そしてどのようなニュアンス（＝トーン）で書かれているかを判断する指標が算出されます。")
+
+st.title("ステップ５　可読性")
+st.write("タダイマ開発中デス　m(_ _)m。")
+
 #%%
 # トーンスコア
 st.title("ステップ６　トーン")
