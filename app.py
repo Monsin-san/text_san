@@ -1,6 +1,8 @@
+#%%
 '''
 streamlit run D:\GoogleDrive\python\python_code\streamlit_app_2\app.py
 '''
+
 import streamlit as st
 from PIL import Image
 from sudachipy import Dictionary
@@ -9,11 +11,13 @@ import re
 from count_pos_frequency_1 import count_pos_frequency
 import matplotlib.pyplot as plt
 from matplotlib.font_manager import FontProperties
+from networkx_1 import make_network
 
 st.title("ネコでも使える！テキスト分析（β版）") # タイトル
 st.write("少しずつ機能を追加していきたいと思います。")
 
-image = Image.open("title.png")
+#image = Image.open("title.png")
+image = Image.open(r"D:\GoogleDrive\python\python_code\streamlit_app_2\title.png")
 st.image(image,use_column_width=True)
 
 st.write("私の研究室では「会計・財務研究におけるテキスト分析」に取り組んでいます。研究活動の一環として、テキスト分析の魅力を体感できるウェブサイトを作成しました。肩の力を抜いてお楽しみください！")
@@ -35,7 +39,7 @@ dictionary = Dictionary().create()
 user_input_text = st.text_area("文章を入力してください:")
 
 # テキストファイルを読み込む
-with open("sample_A.txt", "r", encoding="utf-8") as f:
+with open("D:\GoogleDrive\python\python_code\streamlit_app_2\sample_A.txt", "r", encoding="utf-8") as f:
     text_content = f.read()
 
 # テキストファイルをダウンロードするための関数
@@ -69,7 +73,6 @@ if user_input_text:
     sentence_count = len(re.split('[。.!?]', user_input_text)) - 1
     st.write(f'文章数： {sentence_count} 文')
 
-
 # Streamlitのインターフェイス
 st.title("ステップ２　単語の出現頻度")
 st.write("続いて単語の出現頻度を分析してみましょう。下のボックスからカウントしたい品詞を選択してください。どのような単語が多く使われているでしょうか？")
@@ -77,7 +80,7 @@ st.write("続いて単語の出現頻度を分析してみましょう。下の�
 selected_pos = st.selectbox("カウントする品詞を選んでください:", ("名詞", "動詞", "形容詞"), key='my_unique_selectbox_key')
 
 # グラフのフォントを設定
-fontprop = FontProperties(fname="MEIRYO.TTC")  # フォントのパスを適宜変更
+fontprop = FontProperties(fname=r"D:\GoogleDrive\python\python_code\streamlit_app_2\MEIRYO.TTC")  # フォントのパスを適宜変更
 
 # 以下、コードの一部をSudachiPyに対応させたもの
 if user_input_text:
@@ -108,3 +111,21 @@ if user_input_text:
 
         # Streamlitで表示
         st.pyplot(fig)
+
+st.title("ステップ３　ワードクラウド")
+st.write("タダイマ開発中デス　m(_ _)m。")
+
+#共起ネットワーク
+st.title("ステップ４　共起ネットワーク")
+st.write("共起ネットワークは、単語同士のつながりをイラストにしたもので、どのような単語の組み合わせがみられるかを視覚的にわかりやすく表現できます。")
+st.write("綺麗に図式化するためにはパラメータの細かな調整が必要なのですが、ここでは共起の閾値（＝共起としてカウントする最低値）のみ変更可能にしています。閾値を変更するとどのように変わるのか試してみてください。")
+
+# 1から10までのスライダーを作成。初期値は5。
+slider_value = st.slider('共起の閾値:', min_value=1, max_value=10, value=2)
+
+user_input = user_input_text
+
+if user_input:
+    network = make_network(user_input,slider_value)
+    st.pyplot(network)
+
