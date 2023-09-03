@@ -1,18 +1,23 @@
 #%%
 import pandas as pd
-from sudachipy import Dictionary
+from janome.tokenizer import Tokenizer
 
-# %%
 def tone_score(text):
     with open("mlwordlist.csv", 'r', encoding="utf-8") as csv_file:
         pdlist = pd.read_csv(csv_file)
     plist = pdlist['positive'].values
     nlist = pdlist['negative'].values
 
-    tokenizer = Dictionary().create()
+    tokenizer = Tokenizer()
     
+    # 強制的にカウントしたい単語リスト
+    forced_words = []
+
     tokens = tokenizer.tokenize(text)
-    s = [token.surface() for token in tokens if '名詞' in token.part_of_speech() and '数' not in token.part_of_speech() and '記号' not in token.part_of_speech() and '助詞' not in token.part_of_speech()]
+    s = [token.surface for token in tokens if '名詞' in token.part_of_speech.split(',')[0] and '数' not in token.part_of_speech and '記号' not in token.part_of_speech and '助詞' not in token.part_of_speech]
+    
+    # forced_wordsに含まれる単語を強制的にリストsに追加
+    s += [word for word in forced_words if word in text]
 
     pword = []
     nword = []
@@ -46,6 +51,3 @@ def tone_eval(tone):
         return "結構ポジティブ"
     else:
         return "超ポジティブ"
-    
-#%%
-
