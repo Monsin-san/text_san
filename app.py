@@ -2,7 +2,7 @@
 '''
 streamlit run D:\GoogleDrive\python\python_code\streamlit_app_2\app.py
 '''
-
+import pandas as pd
 import streamlit as st
 from PIL import Image
 from janome.tokenizer import Tokenizer
@@ -155,14 +155,21 @@ st.title("ステップ６　トーン")
 st.write("トーンは－1（超ネガティブ）から1（超ポジティブ）で計算されます。0は中立（ニュートラル）となります。 文章のトーンはどのくらいポジティブ（ネガティブ）でしょうか？")
 
 if user_input:
-    score,nofpword,nofnword = tone_score(user_input)
+    score, nofpword, nofnword, top_pwords, top_nwords = tone_score(user_input)
     evaluation = tone_eval(score)
-    #st.write(f"ポジティブワード： {nofpword}")
-    #st.write(f"ネガティブワード： {nofnword}")
     st.write(f"トーンスコア： {score}")
     st.write(f"トーンレベル： {evaluation}")
-    
 
+    # Convert to DataFrame and display as table
+    df_pwords = pd.DataFrame(top_pwords, columns=["Positive Word", "Frequency"])
+    df_nwords = pd.DataFrame(top_nwords, columns=["Negative Word", "Frequency"])
+
+    st.write("最も頻繁なポジティブワード:")
+    st.table(df_pwords)
+
+    st.write("最も頻繁なネガティブワード:")
+    st.table(df_nwords)
+    
 # タイトルを設定
 st.title('ステップ７　文章の類似度')
 st.write("下記のボックスに2つの文章を入力すると、文章Aと文章Bが似ているかどうかを計算することができます。類似度は0（まったく似ていない）から1（完全に同じ）で計算されます。 ")
