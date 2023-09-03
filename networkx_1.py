@@ -10,7 +10,7 @@ from janome.charfilter import *
 from janome.tokenfilter import *
 
 def make_network(text, frequency_threshold):
-    font = FontProperties(fname="\MEIRYO.TTC")
+    font = FontProperties(fname="MEIRYO.TTC")
     
     # Janomeの設定
     tokenizer = Tokenizer(udic='user_dic.csv', udic_enc='utf8')
