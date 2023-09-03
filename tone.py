@@ -40,7 +40,7 @@ def tone_score(text):
     except ZeroDivisionError:
         tone = 0
     
-    tone = round(tone, 3)
+    tone = round(tone, 5)
     return tone, nofpword, nofnword, top_pwords, top_nwords
 
 def tone_eval(tone):
