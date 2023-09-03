@@ -5,7 +5,7 @@ streamlit run D:\GoogleDrive\python\python_code\streamlit_app_2\app.py
 
 import streamlit as st
 from PIL import Image
-from sudachipy import Dictionary
+from janome.tokenizer import Tokenizer
 import base64
 import re
 from count_pos_frequency_1 import count_pos_frequency
@@ -15,16 +15,20 @@ from networkx_1 import make_network
 from tone import tone_score,tone_eval
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+from janome.tokenizer import Tokenizer
+from janome.analyzer import Analyzer
+from janome.charfilter import *
+from janome.tokenfilter import *
 
-st.title("ネコでも使える！テキスト分析（β版）") # タイトル
+st.title("ネコでも使える！テキスト分析（γ版）") # タイトル
 st.write("少しずつ機能を追加していきたいと思います。")
 
 #image = Image.open("title.png")
 image = Image.open("title.png")
 st.image(image,use_column_width=True)
 
-st.write("私の研究室では「会計・財務研究におけるテキスト分析」に取り組んでいます。研究活動の一環として、テキスト分析の魅力を体感できるウェブサイトを作成しました。肩の力を抜いてお楽しみください！")
-st.write("最終更新日：2023年8月31日")
+st.write("青山学院大学矢澤研究室では「会計・財務研究におけるテキスト分析」に取り組んでいます。研究活動の一環として、テキスト分析の魅力を体感できるウェブサイトを作成しました。肩の力を抜いてお楽しみください！")
+st.write("最終更新日：2023年9月3日")
 
 # %%
 st.title("はじめに")
@@ -34,9 +38,6 @@ st.write("テキストマイニングとは、簡単に言えば、大量のテ�
 
 st.title("準備")
 st.write("下記のボックスに文章を入力してみましょう！サンプルデータを用意していますのでコピー＆ペーストしてください。")
-
-# SudachiPyの辞書を初期化
-dictionary = Dictionary().create()
 
 # ユーザーに文章を入力してもらう
 user_input_text = st.text_area("文章を入力してください:")
@@ -58,17 +59,27 @@ st.markdown(f"【トヨタ自動車　2023年3月期　決算短信】　 {get_t
 st.title("ステップ１　文字数、単語数、文章数")
 st.write("まずは入力した文章の文字数、単語数、文章数が出力されますので確認してください。文章は長いですか、それとも短いですか？文字数と単語数の割合などどうなっていますか？")
 
+# JanomeのTokenizerを初期化
+#tokenizer = Tokenizer()
+tokenizer = Tokenizer(udic='user_dic.csv', udic_enc='utf8')
+
 # テキストが入力された場合の処理
 if user_input_text:
-    user_input_text = user_input_text.translate(str.maketrans({chr(0xFF01 + i): chr(0x21 + i) for i in range(len(user_input_text))}))
-    user_input_text = user_input_text.replace("キャッシュ・フロー","キャッシュフロー")
+    user_input_text = user_input_text.translate(str.maketrans({chr(0xFF01 + i): chr(0x21 + i) for i in range(94)}))
+    user_input_text = user_input_text.replace("キャッシュ・フロー", "キャッシュフロー")
+
+    # 強制的にカウントしたい単語リスト
+    forced_words = []
 
     # 文字数をカウント
     char_count = len(user_input_text)
     st.write(f'文字数： {char_count} 字')
 
     # 単語数をカウント
-    tokens = dictionary.tokenize(user_input_text)
+    tokens = []
+    for token in tokenizer.tokenize(user_input_text):
+        word = token.surface if token.part_of_speech.split(',')[0] != '名詞' else (token.base_form if token.base_form in forced_words else token.surface)
+        tokens.append(word)
     word_count = len(tokens)
     st.write(f'単語数： {word_count} 語')
 
@@ -85,7 +96,6 @@ selected_pos = st.selectbox("カウントする品詞を選んでください:",
 # グラフのフォントを設定
 fontprop = FontProperties(fname="MEIRYO.TTC")  # フォントのパスを適宜変更
 
-# 以下、コードの一部をSudachiPyに対応させたもの
 if user_input_text:
     pos_freq = count_pos_frequency(user_input_text, selected_pos)
     st.write(f'{selected_pos}の出現頻度')
@@ -132,8 +142,6 @@ if user_input:
     network = make_network(user_input,slider_value)
     st.pyplot(network)
 
-st.write("続いて、文章がどの程度わかりやすいか（＝可読性）、そしてどのようなニュアンス（＝トーン）で書かれているかを判断する指標が算出されます。")
-
 st.title("ステップ５　可読性")
 st.write("タダイマ開発中デス　m(_ _)m。")
 
@@ -149,6 +157,7 @@ if user_input:
     #st.write(f"ネガティブワード： {nofnword}")
     st.write(f"トーンスコア： {score}")
     st.write(f"トーンレベル： {evaluation}")
+    
 
 # タイトルを設定
 st.title('ステップ７　文章の類似度')
