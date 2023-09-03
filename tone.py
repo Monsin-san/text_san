@@ -50,6 +50,8 @@ def tone_eval(tone):
         return "結構ネガティブ"
     elif tone < 0:
         return "ややネガティブ"
+    elif tone = 0:
+        return "ニュートラル"
     elif tone < 0.4:
         return "ややポジティブ"
     elif tone < 0.8:
