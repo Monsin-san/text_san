@@ -20,7 +20,7 @@ from janome.analyzer import Analyzer
 from janome.charfilter import *
 from janome.tokenfilter import *
 
-st.title("ネコでも使える！テキスト分析（γ版）") # タイトル
+st.title("ネコでも使える！テキスト分析（β版）") # タイトル
 st.write("少しずつ機能を追加していきたいと思います。")
 
 #image = Image.open("title.png")
@@ -29,6 +29,10 @@ st.image(image,use_column_width=True)
 
 st.write("青山学院大学矢澤研究室では「会計・財務研究におけるテキスト分析」に取り組んでいます。研究活動の一環として、テキスト分析の魅力を体感できるウェブサイトを作成しました。肩の力を抜いてお楽しみください！")
 st.write("最終更新日：2023年9月3日")
+st.write("本サイトの特徴")
+st.write("・ネコでもわかるくらい簡単です")
+st.write("・財務、会計関連のユーザー辞書（2,487単語）を使用しています（金先生、伊藤先生に感謝）")
+st.write("・こんな機能があったらいいな、→連絡ください。yazawakenichiagu(at)gmail.com")
 
 # %%
 st.title("はじめに")
