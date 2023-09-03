@@ -5,22 +5,28 @@ from matplotlib.font_manager import FontProperties
 import networkx as nx
 from networkx.algorithms import community
 import re
-from sudachipy import Dictionary
+from janome.tokenizer import Tokenizer
+from janome.charfilter import *
+from janome.tokenfilter import *
 
 def make_network(text, frequency_threshold):
-    font = FontProperties(fname="MEIRYO.TTC")
+    font = FontProperties(fname="\MEIRYO.TTC")
     
-    tokenizer = Dictionary().create()
-    
-    stop_words = set(["これ", "それ", "あれ", "この", "その", "あの", "ここ", "そこ", "あそこ", "こちら", "どこ", "だれ", "なに", "なん", "何", "私", "こと", "もの"])
+    # Janomeの設定
+    tokenizer = Tokenizer(udic='user_dic.csv', udic_enc='utf8')
+
+    stop_words = set(["%)","これ", "それ", "あれ", "この", "その", "あの", "ここ", "そこ", "あそこ", "こちら", "どこ", "だれ", "なに", "なん", "何", "私", "こと", "もの"])
+
+    # 強制的にカウントしたい単語リスト
+    forced_words = []
     
     text = text.translate(str.maketrans({chr(0xFF01 + i): chr(0x21 + i) for i in range(94)}))
     text = text.replace("キャッシュ・フロー","キャッシュフロー")
     
     nodes = []
     for token in tokenizer.tokenize(text):
-        if token.part_of_speech()[0] == "名詞":
-            word = token.surface()
+        if token.part_of_speech.split(',')[0] == "名詞":
+            word = token.surface if token.base_form not in forced_words else token.base_form
             if len(word) == 1 or re.match(r'^\d+$', word) or word in stop_words:
                 continue
             nodes.append(word)
@@ -41,7 +47,7 @@ def make_network(text, frequency_threshold):
     color_map = {node: i for i, com in enumerate(communities) for node in com}
     node_colors = [color_map.get(node, 0) for node in G.nodes()]
 
-    pos = nx.spring_layout(G, k=0.5, iterations=50, scale=2.0, seed=30)
+    pos = nx.spring_layout(G, k=0.7, iterations=50, scale=2.0, seed=30)
     edge_width = [G[u][v]['weight'] * 0.2 for u, v in G.edges()]
     node_size = [node_freq[node] * 300 for node in G.nodes()]
 
