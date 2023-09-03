@@ -1,6 +1,7 @@
 #%%
 import pandas as pd
 from janome.tokenizer import Tokenizer
+from collections import Counter
 
 def tone_score(text):
     with open("mlwordlist.csv", 'r', encoding="utf-8") as csv_file:
@@ -26,7 +27,11 @@ def tone_score(text):
             pword.append(word)
         if word in nlist:
             nword.append(word)
-    
+
+    # Get top 5 most frequent positive and negative words
+    top_pwords = Counter(pword).most_common(5)
+    top_nwords = Counter(nword).most_common(5)
+
     nofpword = len(pword)
     nofnword = len(nword)
     
@@ -36,7 +41,7 @@ def tone_score(text):
         tone = 0
     
     tone = round(tone, 3)
-    return tone, nofpword, nofnword
+    return tone, nofpword, nofnword, top_pwords, top_nwords
 
 def tone_eval(tone):
     if tone <-0.8:
