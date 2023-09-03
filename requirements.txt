@@ -4,4 +4,4 @@ sudachidict_core
 matplotlib
 networkx==3.1
 scikit-learn==1.3.0
-janome-0.5.0
+janome
