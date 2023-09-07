@@ -19,6 +19,8 @@ from janome.tokenizer import Tokenizer
 from janome.analyzer import Analyzer
 from janome.charfilter import *
 from janome.tokenfilter import *
+import os
+from wordcloud_1 import make_wordcloud
 
 st.title("ネコでも使える！テキスト分析（β版）") # タイトル
 st.write("少しずつ機能を追加していきたいと思います。")
@@ -129,8 +131,22 @@ if user_input_text:
         # Streamlitで表示
         st.pyplot(fig)
 
+user_input = user_input_text
+
 st.title("ステップ３　ワードクラウド")
-st.write("タダイマ開発中デス　m(_ _)m。")
+#st.write("タダイマ開発中デス　m(_ _)m。")
+#ワードクラウド
+st.write("ワードクラウドは単語の出現頻度をイラストにしたもので、どのような単語が多く使われているかを視覚的にわかりやすく表現できます。")
+st.write("下の図は、名詞のみ抽出してワードクラウドを作成しています。なお、場合によっては「連結会計年度」など意味のない単語が大きく描画されることがあります。これらの単語を削除したい場合は下記のストップワードを設定してください。")
+
+additional_stop_words = st.text_area("追加するストップワードを入力してください（スペースで区切って複数入力可能）").split()
+
+if user_input:
+    wordcloud = make_wordcloud(user_input, additional_stop_words)
+    fig, ax = plt.subplots(figsize=(15, 12))
+    ax.imshow(wordcloud, interpolation='bilinear')
+    ax.axis("off")
+    st.pyplot(fig)
 
 #共起ネットワーク
 st.title("ステップ４　共起ネットワーク")
@@ -139,8 +155,6 @@ st.write("綺麗に図式化するためにはパラメータの細かな調整�
 
 # 1から10までのスライダーを作成。初期値は5。
 slider_value = st.slider('共起の閾値:', min_value=1, max_value=10, value=2)
-
-user_input = user_input_text
 
 if user_input:
     network = make_network(user_input,slider_value)
