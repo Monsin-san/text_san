@@ -1,4 +1,3 @@
-#%%
 from collections import Counter
 import matplotlib.pyplot as plt
 from matplotlib.font_manager import FontProperties
@@ -9,14 +8,15 @@ from janome.tokenizer import Tokenizer
 from janome.charfilter import *
 from janome.tokenfilter import *
 
-def make_network(text, frequency_threshold):
+def make_network(text, frequency_threshold, additional_stop_words=[]):
     font = FontProperties(fname="MEIRYO.TTC")
     
     # Janomeの設定
     tokenizer = Tokenizer(udic='user_dic.csv', udic_enc='utf8')
 
     stop_words = set(["%)","これ", "それ", "あれ", "この", "その", "あの", "ここ", "そこ", "あそこ", "こちら", "どこ", "だれ", "なに", "なん", "何", "私", "こと", "もの"])
-
+    stop_words.update(additional_stop_words)  # 追加のストップワードを含める
+    
     # 強制的にカウントしたい単語リスト
     forced_words = []
     
