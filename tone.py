@@ -1,4 +1,3 @@
-#%%
 import pandas as pd
 from janome.tokenizer import Tokenizer
 from collections import Counter
@@ -32,6 +31,12 @@ def tone_score(text):
     top_pwords = Counter(pword).most_common(5)
     top_nwords = Counter(nword).most_common(5)
 
+    # Ensure that there are always 5 words (or <NA> placeholders)
+    while len(top_pwords) < 5:
+        top_pwords.append(("<NA>", 0))
+    while len(top_nwords) < 5:
+        top_nwords.append(("<NA>", 0))
+
     nofpword = len(pword)
     nofnword = len(nword)
     
@@ -40,7 +45,7 @@ def tone_score(text):
     except ZeroDivisionError:
         tone = 0
     
-    tone = round(tone, 5)
+    tone = round(tone, 3)
     return tone, nofpword, nofnword, top_pwords, top_nwords
 
 def tone_eval(tone):
