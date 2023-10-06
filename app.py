@@ -46,10 +46,10 @@ st.sidebar.write("下記のボックスに文章を入力してみましょう�
 
 # サイドバーにユーザーに文章を入力してもらうテキストエリアを配置
 user_input_text_A1 = st.sidebar.text_area("会社名（例：トヨタ自動車）", key='user_input_text_A1')
-user_input_text_A2 = st.sidebar.text_area("文章を入力してください:", key='user_input_text_A2')
 if len(user_input_text_A1) >max_length_1:
     st.sidebar.error(f'入力されたテキストが{max_length_1}文字を超えています！')
     user_input_text_A1 = user_input_text_A1[:max_length_1]  # 入力を最大文字数まで切り詰める
+user_input_text_A2 = st.sidebar.text_area("文章を入力してください:", key='user_input_text_A2')
 if len(user_input_text_A2) >max_length_2:
     st.sidebar.error(f'入力されたテキストが{max_length_2}文字を超えています！')
     user_input_text_A2 = user_input_text_A2[:max_length_2]  # 入力を最大文字数まで切り詰める
@@ -68,10 +68,10 @@ download_link_A = get_text_download_link(text_content_A, "sample_A.txt")
 st.sidebar.markdown(f"サンプルデータA（トヨタ自動車　2023年3月期　決算短信　MD&A）　 {download_link_A}", unsafe_allow_html=True)
 
 user_input_text_B1 = st.sidebar.text_area("会社名（例：日産自動車）", key='user_input_text_B1')
-user_input_text_B2 = st.sidebar.text_area("文章を入力してください:", key='user_input_text_B2')
 if len(user_input_text_B1) >max_length_1:
     st.sidebar.error(f'入力されたテキストが{max_length_1}文字を超えています！')
     user_input_text_B1 = user_input_text_B1[:max_length_1]  # 入力を最大文字数まで切り詰める
+user_input_text_B2 = st.sidebar.text_area("文章を入力してください:", key='user_input_text_B2')
 if len(user_input_text_B2) >max_length_2:
     st.sidebar.error(f'入力されたテキストが{max_length_2}文字を超えています！')
     user_input_text_B2 = user_input_text_B2[:max_length_2]  # 入力を最大文字数まで切り詰める
