@@ -144,6 +144,10 @@ st.write("続いて単語の出現頻度を分析してみましょう。下の�
 
 def display_pos_frequency(user_input_text, company_name, selected_pos):
     if user_input_text:
+        table = str.maketrans({chr(0xFF01 + i): chr(0x21 + i) for i in range(94)})
+        user_input_text = user_input_text.translate(table)
+        user_input_text = user_input_text.lower()
+        user_input_text = user_input_text.replace("キャッシュ・フロー", "キャッシュフロー")
         pos_freq = count_pos_frequency(user_input_text, selected_pos)
         st.write(f"{company_name} - {selected_pos}の出現頻度")
         st.write(pos_freq)
