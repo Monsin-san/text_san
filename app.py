@@ -116,9 +116,18 @@ def process_text(user_input_text, company_name):
 
         # 文章数をカウント
         sentence_count = len(re.split('[。.!?]', user_input_text)) - 1
+
+        # 平均的な文章の長さを計算（文章数が0でない場合）
+        avg_sentence_length = char_count / sentence_count if sentence_count else 0
         
         # 新しい行を作成し、既存のDataFrameに連結
-        new_row = pd.DataFrame({'社名': [company_name], '文字数': [char_count], '単語数': [word_count], '文章数': [sentence_count]})
+        new_row = pd.DataFrame({
+            '社名': [company_name],
+            '文字数': [char_count],
+            '単語数': [word_count],
+            '文章数': [sentence_count],
+            '平均文章長': [avg_sentence_length]
+        })
         df = pd.concat([df, new_row], ignore_index=True)
 
 # ユーザー入力テキストを処理します。
