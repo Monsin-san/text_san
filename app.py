@@ -102,8 +102,9 @@ df = pd.DataFrame(columns=['社名', '文字数', '単語数', '文章数'])
 def process_text(user_input_text, company_name):
     global df
     if user_input_text:
-        user_input_text = user_input_text.translate(str.maketrans({chr(0xFF01 + i): chr(0x21 + i) for i in range(94)}))
-        user_input_text = user_input_text.translate(user_input_text).lower()
+        table = str.maketrans({chr(0xFF01 + i): chr(0x21 + i) for i in range(94)})
+　　　　 user_input_text = user_input_text.translate(table)
+　　　　 user_input_text = user_input_text.lower()
         user_input_text = user_input_text.replace("キャッシュ・フロー", "キャッシュフロー")
         
         # 文字数をカウント
