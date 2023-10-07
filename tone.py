@@ -3,7 +3,7 @@ from janome.tokenizer import Tokenizer
 from collections import Counter
 
 def tone_score(text):
-    with open("mlwordlist.csv", 'r', encoding="utf-8") as csv_file:
+    with open("mlwordlist_2.csv", 'r', encoding="utf-8") as csv_file:
         pdlist = pd.read_csv(csv_file)
     plist = pdlist['positive'].values
     nlist = pdlist['negative'].values
