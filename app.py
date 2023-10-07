@@ -118,7 +118,7 @@ def process_text(user_input_text, company_name):
         sentence_count = len(re.split('[。.!?]', user_input_text)) - 1
 
         # 平均的な文章の長さを計算（文章数が0でない場合）
-        avg_sentence_length = char_count / sentence_count if sentence_count else 0
+        avg_sentence_length = round(char_count / sentence_count) if sentence_count else 0
         
         # 新しい行を作成し、既存のDataFrameに連結
         new_row = pd.DataFrame({
