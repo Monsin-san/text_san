@@ -19,7 +19,7 @@ from janome.tokenfilter import *
 import os
 from wordcloud_1 import make_wordcloud
 
-st.title("ネコでも使える！テキスト分析（Ver.1.0）") # タイトル
+st.title("ネコでも使える！テキスト分析（Ver.2.0）") # タイトル
 st.write("少しずつ機能を追加していきたいと思います。")
 
 image = Image.open("title.png") #github
