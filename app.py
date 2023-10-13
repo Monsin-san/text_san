@@ -29,7 +29,8 @@ st.write("私の研究室では「会計・財務研究におけるテキスト�
 st.write("本サイトの特徴")
 st.write("・ネコでもできます。")
 st.write("・インタラクティブに遊べます。")
-st.write("・改善の要望あればご連絡ください。→yazawa(at)busi.aoyama.ac.jp")
+st.write("・会計関連のユーザー辞書2,487語を使用しています。")
+st.write("※感想・質問等お寄せください。→yazawa(at)busi.aoyama.ac.jp")
 
 st.write("最終更新日：2023年10月13日")
 
