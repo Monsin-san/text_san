@@ -28,8 +28,8 @@ def tone_score(text):
             nword.append(word)
 
     # Get top 5 most frequent positive and negative words
-    top_pwords = Counter(pword).most_common(5)
-    top_nwords = Counter(nword).most_common(5)
+    top_pwords = Counter(pword).most_common()
+    top_nwords = Counter(nword).most_common()
 
     # Ensure that there are always 5 words (or <NA> placeholders)
     while len(top_pwords) < 5:
@@ -63,3 +63,7 @@ def tone_eval(tone):
         return "結構ポジティブ"
     else:
         return "超ポジティブ"
+
+
+#%%
+
