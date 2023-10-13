@@ -12,16 +12,14 @@ char_filters = [UnicodeNormalizeCharFilter()]
 tokenizer = Tokenizer(udic='user_dic.csv', udic_enc='utf8')
 token_filters = [POSKeepFilter(['名詞']), ExtractAttributeFilter('base_form')]
 
+
 def count_pos_frequency(text, selected_pos):
     # ストップワードの定義（オプション）
     stop_words = set(["%)","これ", "それ", "あれ", "この", "その", "あの", "ここ", "そこ", "あそこ", "こちら", "どこ", "だれ", "なに", "なん", "何", "私", "こと", "もの"])
 
     # 強制的にカウントしたい単語リスト
     forced_words = []
-
-    text = text.translate(str.maketrans({chr(0xFF01 + i): chr(0x21 + i) for i in range(len(text))}))
-    text = text.replace("キャッシュ・フロー", "キャッシュフロー")
-
+    
     nodes = []
     tokens = tokenizer.tokenize(text)
 
@@ -37,4 +35,8 @@ def count_pos_frequency(text, selected_pos):
     # 選択された品詞の出現頻度をカウント
     pos_freq = Counter(nodes)
     
-    return pos_freq
+    # 上位5単語を取得
+    top_words = pos_freq.most_common()
+    
+    return top_words
+
