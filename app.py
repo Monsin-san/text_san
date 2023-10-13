@@ -19,9 +19,6 @@ from janome.tokenfilter import *
 import os
 from wordcloud_1 import make_wordcloud
 
-os.chdir(r"D:\GoogleDrive\python\python_code\streamlit_app_3") #home
-#os.chdir(r"F:\マイドライブ\python\python_code\streamlit_app_3") #office
-
 st.title("ネコでも使える！テキスト分析（Ver.1.0）") # タイトル
 st.write("少しずつ機能を追加していきたいと思います。")
 
