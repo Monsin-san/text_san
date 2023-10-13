@@ -26,6 +26,11 @@ image = Image.open("title.png") #github
 st.image(image,use_column_width=True)
 
 st.write("私の研究室では「会計・財務研究におけるテキスト分析」に取り組んでいます。研究活動の一環として、テキスト分析の魅力を体感できるウェブサイトを作成しました。肩の力を抜いてお楽しみください！")
+st.write("本サイトの特徴")
+st.write("・ネコでもできます。")
+st.write("・インタラクティブに遊べます。")
+st.write("・改善の要望あればご連絡ください。→yazawa(at)busi.aoyama.ac.jp")
+
 st.write("最終更新日：2023年10月13日")
 
 # %%
