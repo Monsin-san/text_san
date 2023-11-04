@@ -1,13 +1,3 @@
-#%%
-#バージョン3:2社比較
-#自宅
-#conda activate env_py39
-#streamlit run D:\GoogleDrive\python\python_code\streamlit_app_3\app.py 
-#path C:\Users\yazaw\anaconda3\envs\env_py39
-
-#大学
-#streamlit run F:\マイドライブ\python\python_code\streamlit_app_3\app.py 
-
 import streamlit as st
 import pandas as pd
 from PIL import Image
