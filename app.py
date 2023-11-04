@@ -1,3 +1,13 @@
+#%%
+#バージョン3:2社比較
+#自宅
+#conda activate env_py39
+#streamlit run D:\GoogleDrive\python\python_code\streamlit_app_3\app.py 
+#path C:\Users\yazaw\anaconda3\envs\env_py39
+
+#大学
+#streamlit run F:\マイドライブ\python\python_code\streamlit_app_3\app.py 
+
 import streamlit as st
 import pandas as pd
 from PIL import Image
@@ -117,8 +127,7 @@ def maesyori(text):
     return text
 
 st.title("ステップ２　前処理")
-st.write("以下の前処理が自動で実行されます。")
-st.write("データクリーニング（空白、改行の削除）、大文字→小文字、全角→半角、トークン化")
+st.write("前処理は自動で実行されます。")
 
 #最初の分析
 st.title("ステップ３　分析")
