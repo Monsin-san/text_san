@@ -1,13 +1,3 @@
-#%%
-#バージョン3:2社比較
-#自宅
-#conda activate env_py39
-#streamlit run D:\GoogleDrive\python\python_code\streamlit_app_3\app.py 
-#path C:\Users\yazaw\anaconda3\envs\env_py39
-
-#大学
-#streamlit run F:\マイドライブ\python\python_code\streamlit_app_3\app.py 
-
 import streamlit as st
 import pandas as pd
 from PIL import Image
@@ -168,10 +158,12 @@ def process_text(user_input_text, company_name):
 
 # ユーザー入力テキストを処理します。
 if user_input_text_A2:
+    user_input_text_A2 = maesyori(user_input_text_A2)
     process_text(user_input_text_A2, user_input_text_A1 or 'A')  # 'A' as default if name is empty
 
 # user_input_text_B2が空でない場合、処理を実行します。
 if user_input_text_B2:
+    user_input_text_B2 = maesyori(user_input_text_B2)
     process_text(user_input_text_B2, user_input_text_B1 or 'B')  # 'B' as default if name is empty
 
 # DataFrameが空でない場合にのみ、DataFrameを転置して表示します。
