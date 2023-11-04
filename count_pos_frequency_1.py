@@ -2,16 +2,12 @@
 from collections import Counter
 import re
 from janome.tokenizer import Tokenizer
-from janome.analyzer import Analyzer
-from janome.charfilter import *
-from janome.tokenfilter import *
-import streamlit as st
+import os
 
-# Janomeの設定
-char_filters = [UnicodeNormalizeCharFilter()]
+#os.chdir(r"D:\GoogleDrive\python\python_code\streamlit_app_3") #home
+#os.chdir(r"F:\マイドライブ\python\python_code\streamlit_app_3") #office
+
 tokenizer = Tokenizer(udic='user_dic.csv', udic_enc='utf8')
-token_filters = [POSKeepFilter(['名詞']), ExtractAttributeFilter('base_form')]
-
 
 def count_pos_frequency(text, selected_pos):
     # ストップワードの定義（オプション）
@@ -40,3 +36,4 @@ def count_pos_frequency(text, selected_pos):
     
     return top_words
 
+#%%
