@@ -18,7 +18,7 @@ def identify_gosyu(text):
     for token in tokens:
         surface = token.surface
         # 漢字のみチェック
-        if all('\u4e00' <= char <= '\u9fff' for char in surface):
+        if all('\u4e00' <= char <= '\u9fff' or char == '\u3005' for char in surface):
             kango.append(surface)
         # ひらがなチェック（和語含む）
         elif all('\u3040' <= char <= '\u309f' or '\u4e00' <= char <= '\u9fff' for char in surface):
