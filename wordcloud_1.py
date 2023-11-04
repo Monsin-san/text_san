@@ -40,4 +40,5 @@ def make_wordcloud(text, additional_stop_words):
                         background_color="white", collocations=False, 
                         max_words=500, max_font_size=150).generate(word_nouns)
     return wordcloud
+#%%
 
