@@ -67,7 +67,7 @@ import re
 
 def readability(text):
     sentences = re.split('。', text)
-    sentences = [sentence for sentence in sentences if len(sentence) > 20]  # 30文字以下の文を除外
+    sentences = [sentence for sentence in sentences if len(sentence) > 30]  # 30文字以下の文を除外
     nofsent = len(sentences)  # 文の数を再計算
 
     if nofsent == 0:  # 除外後に文がない場合は、可読性スコアを計算できない
