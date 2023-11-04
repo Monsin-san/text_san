@@ -3,7 +3,7 @@ from janome.tokenizer import Tokenizer
 import re
 import os
 
-os.chdir(r"D:\GoogleDrive\python\python_code\streamlit_app_3") #home
+#os.chdir(r"D:\GoogleDrive\python\python_code\streamlit_app_3") #home
 tokenizer = Tokenizer(udic='user_dic.csv', udic_enc='utf8')
     
 def identify_gosyu(text):
