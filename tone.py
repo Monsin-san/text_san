@@ -1,3 +1,4 @@
+#%%
 import pandas as pd
 from janome.tokenizer import Tokenizer
 from collections import Counter
@@ -8,7 +9,7 @@ def tone_score(text):
     plist = pdlist['positive'].values
     nlist = pdlist['negative'].values
 
-    tokenizer = Tokenizer()
+    tokenizer = Tokenizer(udic='user_dic.csv', udic_enc='utf8')
     
     # 強制的にカウントしたい単語リスト
     forced_words = []
@@ -52,7 +53,7 @@ def tone_eval(tone):
     if tone <-0.8:
         return "超ネガティブ"
     elif tone <-0.4:
-        return "結構ネガティブ"
+        return "かなりネガティブ"
     elif tone < 0:
         return "ややネガティブ"
     elif tone == 0:
@@ -60,10 +61,9 @@ def tone_eval(tone):
     elif tone < 0.4:
         return "ややポジティブ"
     elif tone < 0.8:
-        return "結構ポジティブ"
+        return "かなりポジティブ"
     else:
         return "超ポジティブ"
-
 
 #%%
 
