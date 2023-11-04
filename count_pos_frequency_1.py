@@ -4,9 +4,6 @@ import re
 from janome.tokenizer import Tokenizer
 import os
 
-#os.chdir(r"D:\GoogleDrive\python\python_code\streamlit_app_3") #home
-#os.chdir(r"F:\マイドライブ\python\python_code\streamlit_app_3") #office
-
 tokenizer = Tokenizer(udic='user_dic.csv', udic_enc='utf8')
 
 def count_pos_frequency(text, selected_pos):
