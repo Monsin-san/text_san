@@ -1,3 +1,4 @@
+import plotly.express as px
 import streamlit as st
 import pandas as pd
 from PIL import Image
@@ -355,75 +356,60 @@ if user_input_text_A2:
     gosyu_ratios = calculate_gosyu_ratios(user_input_text_A2)
     gosyu_counts = identify_gosyu(user_input_text_A2)
     gosyu_counts.pop('記号・数字', None)  # symbols_numbersを除外
+    
+    st.subheader(subheader_text_A1)
+    # アースカラーパレットを設定
+    earth_colors = ['#8FBC8F', '#F5DEB3', '#EEE8AA', '#C2B280', '#BDB76B']
 
-    # 表とグラフを並べて表示
-    col1, col2 = st.columns(2)
+    # 最大値の要素を特定
+    max_value = max(gosyu_ratios.values())
+    pull_values = [0.1 if value == max_value else 0 for value in gosyu_ratios.values()]
 
-    with col1:
-        st.subheader(subheader_text_A1)
-        # インデックスをリセットして削除
-        df_gosyu = pd.DataFrame(list(gosyu_counts.items()), columns=['語種', '例'])
-        df_gosyu = df_gosyu.set_index('語種')
-        st.dataframe(df_gosyu)  # 語種の数を表示
+    # Plotlyを使って円グラフを作成
+    fig = px.pie(values=list(gosyu_ratios.values()), names=list(gosyu_ratios.keys()),
+                color_discrete_sequence=earth_colors)
 
-        with col2:
-            st.subheader("円グラフ")
-            # 円グラフのカラーパレットをアースカラーに設定
-            earth_colors = ['#8FBC8F', '#F5DEB3', '#EEE8AA', '#C2B280', '#BDB76B']  # アースカラーパレットに5色を設定
-            # 日本語フォントの設定
-            font_path = "MEIRYO.TTC"  # フォントのパスを指定
-            font_prop = FontProperties(fname=font_path, size=20)  # フォントサイズを設定
-            # 円グラフの描画設定
-            labels = list(gosyu_ratios.keys())
-            sizes = list(gosyu_ratios.values())
-            # グラフのサイズを大きくする
-            fig, ax = plt.subplots(figsize=(10, 8))  # figsizeを調整してグラフのサイズを大きくする
-            plt.rcParams['font.size'] = 16  # パーセンテージのフォントサイズを調整
-            wedges, texts, autotexts = ax.pie(sizes, labels=['']*len(labels), autopct='%1.1f%%', startangle=90, colors=earth_colors, pctdistance=0.85)  # pctdistanceを調整
-            # 凡例をグラフの外側に配置する
-            plt.legend(wedges, labels, loc='center left', bbox_to_anchor=(1, 0, 0.5, 1), prop=font_prop)
-            for text in autotexts:
-                text.set_fontproperties(font_prop)
-                text.set_color('Black')
-            ax.axis('equal')  # 円形を保つ
-            st.pyplot(fig)  # Streamlitにグラフを表示
-            
+    # 強調表示の設定
+    fig.update_traces(textinfo='percent+label', pull=pull_values)
+    fig.update_layout(legend=dict(orientation="h", yanchor="bottom", y=-0.25, xanchor="center", x=0.5)) # 凡例の位置調整
+    fig.update_layout(showlegend=False)
+    
+    # Streamlitにグラフを表示
+    st.plotly_chart(fig)
+
+    df_gosyu = pd.DataFrame(list(gosyu_counts.items()), columns=['語種', '例'])
+    df_gosyu = df_gosyu.set_index('語種')
+    st.dataframe(df_gosyu)  # 語種の数を表示
+
 if user_input_text_B2:
     # 語種の割合を計算
     gosyu_ratios = calculate_gosyu_ratios(user_input_text_B2)
     gosyu_counts = identify_gosyu(user_input_text_B2)
     gosyu_counts.pop('記号・数字', None)  # symbols_numbersを除外
 
-    # 表とグラフを並べて表示
-    col1, col2 = st.columns(2)
-
-    with col1:
-        st.subheader(subheader_text_B1)
-        df_gosyu = pd.DataFrame(list(gosyu_counts.items()), columns=['語種', '例'])
-        df_gosyu = df_gosyu.set_index('語種')
-        st.dataframe(df_gosyu)  # 語種の数を表示
+    st.subheader(subheader_text_B1)
             
-        with col2:
-            st.subheader("円グラフ")
-            # 円グラフのカラーパレットをアースカラーに設定
-            earth_colors = ['#8FBC8F', '#F5DEB3', '#EEE8AA', '#C2B280', '#BDB76B']  # アースカラーパレットに5色を設定
-            # 日本語フォントの設定
-            font_path = "MEIRYO.TTC"  # フォントのパスを指定
-            font_prop = FontProperties(fname=font_path, size=20)  # フォントサイズを設定
-            # 円グラフの描画設定
-            labels = list(gosyu_ratios.keys())
-            sizes = list(gosyu_ratios.values())
-            # グラフのサイズを大きくする
-            fig, ax = plt.subplots(figsize=(10, 8))  # figsizeを調整してグラフのサイズを大きくする
-            plt.rcParams['font.size'] = 16  # パーセンテージのフォントサイズを調整
-            wedges, texts, autotexts = ax.pie(sizes, labels=['']*len(labels), autopct='%1.1f%%', startangle=90, colors=earth_colors, pctdistance=0.85)  # pctdistanceを調整
-            # 凡例をグラフの外側に配置する
-            plt.legend(wedges, labels, loc='center left', bbox_to_anchor=(1, 0, 0.5, 1), prop=font_prop)
-            for text in autotexts:
-                text.set_fontproperties(font_prop)
-                text.set_color('Black')
-            ax.axis('equal')  # 円形を保つ
-            st.pyplot(fig)  # Streamlitにグラフを表示
+    # アースカラーパレットを設定
+    earth_colors = ['#8FBC8F', '#F5DEB3', '#EEE8AA', '#C2B280', '#BDB76B']
+
+    # 最大値の要素を特定
+    max_value = max(gosyu_ratios.values())
+    pull_values = [0.1 if value == max_value else 0 for value in gosyu_ratios.values()]
+
+    # Plotlyを使って円グラフを作成
+    fig = px.pie(values=list(gosyu_ratios.values()), names=list(gosyu_ratios.keys()),
+                color_discrete_sequence=earth_colors)
+
+    # 強調表示の設定
+    fig.update_traces(textinfo='percent+label', pull=pull_values)
+    fig.update_layout(legend=dict(orientation="h", yanchor="bottom", y=-0.25, xanchor="center", x=0.5)) # 凡例の位置調整
+
+    # Streamlitにグラフを表示
+    st.plotly_chart(fig)
+        
+    df_gosyu = pd.DataFrame(list(gosyu_counts.items()), columns=['語種', '例'])
+    df_gosyu = df_gosyu.set_index('語種')
+    st.dataframe(df_gosyu)  # 語種の数を表示
         
 #%%
 st.subheader("⑤　トーン")
