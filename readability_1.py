@@ -24,7 +24,7 @@ def identify_gosyu(text):
         elif all('\u3040' <= char <= '\u309f' or '\u4e00' <= char <= '\u9fff' for char in surface):
             wago.append(surface)
         # カタカナのみチェック
-        elif all('\u30a0' <= char <= '\u30ff' for char in surface):
+        elif all('\u30a0' <= char <= '\u30ff' and char != '\u30fb' for char in surface):
             katakana.append(surface)
         # アルファベットのみチェック
         elif all('A' <= char <= 'Z' or 'a' <= char <= 'z' for char in surface):
