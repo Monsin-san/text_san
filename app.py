@@ -532,28 +532,3 @@ st.write("青山学院大学　経営学部　矢澤憲一研究室")
 st.write("【免責事項】")
 st.write("このウェブサイトおよびそのコンテンツは、一般的な情報提供を目的としています。このウェブサイトの情報を使用または適用することによって生じるいかなる利益、損失、損害について、当ウェブサイトおよびその運営者は一切の責任を負いません。情報の正確性、完全性、時宜性、適切性についても、一切保証するものではありません。")
 
-import plotly.express as px
-gosyu_ratios = {
-    '漢語': 30,
-    '和語': 25,
-    'カタカナ': 15,
-    'アルファベット': 10,
-    '混種語': 10,
-    '記号・数字': 10
-}
-# Plotlyを使って円グラフを作成
-# カスタムカラーパレットを定義
-custom_colors = ['#8FBC8F', '#F5DEB3', '#EEE8AA', '#C2B280', '#BDB76B']
-
-# カスタムカラーパレットを使用する場合
-fig = px.pie(values=list(gosyu_ratios.values()), names=list(gosyu_ratios.keys()),
-             title="語種の割合", 
-             color_discrete_sequence=custom_colors) # カスタムカラーパレットを使用
-
-
-# グラフのカスタマイズ（オプション）
-fig.update_traces(textinfo='percent+label', pull=[0.1, 0, 0, 0, 0, 0]) # 特定のスライスを強調表示する場合
-fig.update_layout(legend=dict(orientation="h", yanchor="bottom", y=-0.25, xanchor="center", x=0.5)) # 凡例の位置調整
-
-# Streamlitにグラフを表示
-st.plotly_chart(fig)
