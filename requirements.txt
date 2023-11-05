@@ -7,3 +7,4 @@ scikit-learn==1.3.0
 janome
 wordcloud
 tabulate
+plotly-5.18.0
