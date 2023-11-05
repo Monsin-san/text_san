@@ -30,7 +30,7 @@ def identify_gosyu(text):
         elif all('A' <= char <= 'Z' or 'a' <= char <= 'z' for char in surface):
             alphabet.append(surface)
         # 記号・アラビア数字チェック
-        elif all(not('\u4e00' <= char <= '\u9fff' or '\u3040' <= char <= '\u309f' or '\u30a0' <= char <= '\u30ff' or 'A' <= char <= 'Z' or 'a' <= char <= 'z') for char in surface):
+                elif all(not('\u4e00' <= char <= '\u9fff' or '\u3040' <= char <= '\u309f' or ('\u30a0' <= char <= '\u30ff' and char != '\u30fb') or 'A' <= char <= 'Z' or 'a' <= char <= 'z') for char in surface):
             symbols_numbers.append(surface)
         # 上記以外（混種語）
         else:
