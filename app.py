@@ -359,7 +359,7 @@ if user_input_text_A2:
     
     st.subheader(subheader_text_A1)
     # アースカラーパレットを設定
-    earth_colors = ['#8FBC8F', '#F5DEB3', '#EEE8AA', '#C2B280', '#BDB76B']
+    earth_colors = ['#8FBC8F', '#F5DEB3', '#EEE8AA', '#C2B280', '#D3D3D3']
 
     # 最大値の要素を特定
     max_value = max(gosyu_ratios.values())
@@ -390,7 +390,7 @@ if user_input_text_B2:
     st.subheader(subheader_text_B1)
             
     # アースカラーパレットを設定
-    earth_colors = ['#8FBC8F', '#F5DEB3', '#EEE8AA', '#C2B280', '#BDB76B']
+    earth_colors = ['#8FBC8F', '#F5DEB3', '#EEE8AA', '#C2B280', '#D3D3D3']
 
     # 最大値の要素を特定
     max_value = max(gosyu_ratios.values())
