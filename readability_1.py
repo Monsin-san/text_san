@@ -17,22 +17,25 @@ def identify_gosyu(text):
 
     for token in tokens:
         surface = token.surface
+        # 中黒のみの場合、記号・アラビア数字として扱う
+        if all(char == '\u30fb' for char in surface):
+            symbols_numbers.append(surface)
         # 漢字のみチェック
-        if all('\u4e00' <= char <= '\u9fff' or char == '\u3005' for char in surface):
+        elif all('\u4e00' <= char <= '\u9fff' or char == '\u3005' for char in surface):
             kango.append(surface)
         # ひらがなチェック（和語含む）
         elif all('\u3040' <= char <= '\u309f' or '\u4e00' <= char <= '\u9fff' for char in surface):
             wago.append(surface)
-        # カタカナのみチェック
-        elif all('\u30a0' <= char <= '\u30ff' and char != '\u30fb' for char in surface):
+        # カタカナのみチェック（中黒も許容）
+        elif all('\u30a0' <= char <= '\u30ff' or char == '\u30fb' for char in surface):
             katakana.append(surface)
         # アルファベットのみチェック
         elif all('A' <= char <= 'Z' or 'a' <= char <= 'z' for char in surface):
             alphabet.append(surface)
         # 記号・アラビア数字チェック
-        elif all(not('\u4e00' <= char <= '\u9fff' or '\u3040' <= char <= '\u309f' or ('\u30a0' <= char <= '\u30ff' and char != '\u30fb') or 'A' <= char <= 'Z' or 'a' <= char <= 'z') for char in surface):
+        elif all(not('\u4e00' <= char <= '\u9fff' or '\u3040' <= char <= '\u309f' or '\u30a0' <= char <= '\u30ff' or 'A' <= char <= 'Z' or 'a' <= char <= 'z') for char in surface):
             symbols_numbers.append(surface)
-        # 上記以外（混種語）
+        # 混種語
         else:
             mixed.append(surface)
 
