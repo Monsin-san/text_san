@@ -40,7 +40,12 @@ def tone_score(text):
 
     nofpword = len(pword)
     nofnword = len(nword)
-    
+
+    # 両方の単語数が0の場合、特別な処理を行う
+    if nofpword == 0 and nofnword == 0:
+        return "データなし", 0, 0, [("<NA>", 0)], [("<NA>", 0)]
+
+    # トーンスコアの計算
     try:
         tone = (nofpword - nofnword) / (nofnword + nofpword)
     except ZeroDivisionError:
