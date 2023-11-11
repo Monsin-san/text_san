@@ -231,6 +231,7 @@ def display_wordcloud(user_input_text, company_name, additional_stop_words):
     try:
         wordcloud = make_wordcloud(user_input_text, additional_stop_words)
     except ValueError as e:
+        # Streamlit UIで日本語のエラーメッセージを表示
         st.error(f"{company_name}: {e}")
         return
 
