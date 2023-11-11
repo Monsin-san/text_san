@@ -20,13 +20,14 @@ from networkx_1 import make_network_with_jaccard_enhanced
 from readability_1 import readability,calculate_gosyu_ratios,identify_gosyu
 from tone import tone_score,tone_eval
 
+
 st.title("ネコでも使える！会計テキストマイニング") # タイトル
 
 image = Image.open("title.png") 
 st.image(image,use_column_width=True)
 
 st.write("青山学院大学矢澤研究室では「会計・財務データを用いたテキスト分析」に取り組んでいます。研究活動の一環として、テキスト分析の魅力を体感できるウェブサイトを作成しました。肩の力を抜いてお楽しみください！")
-st.write("最終更新日：2023年11月4日")
+st.write("最終更新日：2023年11月11日")
 
 # %%
 st.title("はじめに")
@@ -180,6 +181,10 @@ def display_pos_frequency(user_input_text, company_name, selected_pos):
     if user_input_text:
         top_words = count_pos_frequency(user_input_text, selected_pos)
         
+        if not top_words:  # 抽出された単語がない場合
+            st.error(f"{company_name}: テキストから{selected_pos}を抽出できませんでした。")
+            return
+
         # 表示用のデータフレームを作成
         df = pd.DataFrame(top_words, columns=["単語", "出現頻度"])
         
@@ -191,6 +196,7 @@ def display_pos_frequency(user_input_text, company_name, selected_pos):
         
         # データフレームを表示
         st.write(df)
+
 
 selected_pos = st.selectbox("カウントする品詞を選んでください:", ("名詞", "動詞", "形容詞"), key='my_unique_selectbox_key')
 
@@ -222,34 +228,29 @@ st.write("ワードクラウドは単語の出現頻度をイラストにした�
 st.write("下の図は、名詞のみ抽出してワードクラウドを作成しています。")
 
 def display_wordcloud(user_input_text, company_name, additional_stop_words):
-    if not user_input_text.strip():  # テキストが空または空白のみの場合
-        st.write(f"{company_name}: テキストが入力されていません。")
+    try:
+        wordcloud = make_wordcloud(user_input_text, additional_stop_words)
+    except ValueError as e:
+        st.error(f"{company_name}: {e}")
         return
-    
-    wordcloud = make_wordcloud(user_input_text, additional_stop_words)
-    
-    if not wordcloud:  # 単語がない場合
-        st.write(f"{company_name}: 単語が見つかりませんでした。")
-        return
-    
+
     fig, ax = plt.subplots(figsize=(15, 12))
     ax.imshow(wordcloud, interpolation='bilinear')
     ax.axis("off")
     st.pyplot(fig)
-
+    
 # A社のストップワード
 if user_input_text_A2:
     st.subheader(f"{user_input_text_A1 or 'A'}-ワードクラウド")
-    additional_stop_words_A = st.text_area(f"追加ストップワードを入力してください（スペースで区切って複数入力可能）",key='additional_stop_words_A').split()
+    additional_stop_words_A = st.text_area("追加ストップワードを入力してください（スペースで区切って複数入力可能）", key='additional_stop_words_A').split()
     display_wordcloud(user_input_text_A2, user_input_text_A1 or 'A', additional_stop_words_A)
 
 # B社のストップワード
 if user_input_text_B2:
     st.subheader(f"{user_input_text_B1 or 'B'}-ワードクラウド")
-    additional_stop_words_B = st.text_area(f"追加ストップワードを入力してください（スペースで区切って複数入力可能）",key='additional_stop_words_B').split()
+    additional_stop_words_B = st.text_area("追加ストップワードを入力してください（スペースで区切って複数入力可能）", key='additional_stop_words_B').split()
     display_wordcloud(user_input_text_B2, user_input_text_B1 or 'B', additional_stop_words_B)
-
-
+    
 #%%
 st.subheader("③　共起ネットワーク")
 st.write("共起ネットワークは、単語同士のつながりをイラストにしたもので、どのような単語の組み合わせがみられるかを視覚的にわかりやすく表現できます。")
@@ -259,7 +260,7 @@ def display_network_final(user_input_text, company_name, additional_stop_words, 
         st.write(f"{company_name}: テキストが入力されていません。")
         return
     
-    # Get user input for jaccard_threshold, min_word_freq, min_cooccurrence, and top_n_edges
+    # Jaccard係数、単語の最小出現数、最小共起数、上位共起関係の数の設定
     jaccard_threshold = st.slider(f"Jaccard係数の閾値", min_value=0.0, max_value=1.0, value=0.2, step=0.1, key=f"{slider_key_prefix}_jaccard_threshold")
     min_word_freq = st.slider(f"単語の最小出現数", min_value=1, max_value=50, value=5, key=f"{slider_key_prefix}_min_word_freq")
     min_cooccurrence = st.slider(f"最小共起数", min_value=1, max_value=10, value=2, key=f"{slider_key_prefix}_min_cooccurrence")
@@ -268,7 +269,7 @@ def display_network_final(user_input_text, company_name, additional_stop_words, 
     network = make_network_with_jaccard_enhanced(user_input_text, jaccard_threshold, additional_stop_words, min_word_freq, min_cooccurrence, top_n_edges)
     
     if not network:
-        st.write(f"{company_name}: 単語の共起ネットワークが見つかりませんでした。")
+        st.error(f"{company_name}: 単語の共起ネットワークが見つかりませんでした。")
         return
 
     st.pyplot(network)
@@ -288,50 +289,62 @@ st.subheader("④　可読性")
 st.write("可読性は、上級後半（超難しい）から初級前半（超易しい）まで文章の読みやすさを6段階で評価します。文章はどれくらい読みやすいでしょうか？")
 
 def get_readability_data(user_input, company_name):
-    if user_input:
-        # 可読性スコアとその他の指標を計算
-        score, buncho, kango, wago, dousi, jyosi = readability(user_input)
-        
-        # 各指標を四捨五入
-        score = round(score, 2)
-        buncho = round(buncho, 2)
-        #kango = round(kango, 2)
-        #wago = round(wago, 2)
-        #dousi = round(dousi, 2)
-        #jyosi = round(jyosi, 2)
-        
-        # スコアに基づくレベルの判定
-        if 0.5 <= score < 1.5:
-            level = "超難しい"
-        elif 1.5 <= score < 2.5:
-            level = "難しい"
-        elif 2.5 <= score < 3.5:
-            level = "やや難しい）"
-        elif 3.5 <= score < 4.5:
-            level = "ふつう"
-        elif 4.5 <= score < 5.5:
-            level = "易しい"
-        elif 5.5 <= score < 6.5:
-            level = "超易しい"
-        else:
-            level = "判定不能"
-        
-        return [score, level, buncho]
+    if not user_input.strip():
+        st.error(f"{company_name}: テキストが入力されていません。")
+        return None
+
+    readability_result = readability(user_input)
+    
+    if readability_result is None:
+        st.error(f"{company_name}: 可読性のデータを計算できませんでした。")
+        return None
+
+    score, buncho, kango, wago, dousi, jyosi = readability_result
+
+    if score is None:
+        st.error(f"{company_name}: スコアを計算できませんでした。")
+        return None
+
+    score = round(score, 2)
+    buncho = round(buncho, 2) if buncho is not None else "N/A"
+    
+    # スコアに基づくレベルの判定
+    if 0.5 <= score < 1.5:
+        level = "超難しい"
+    elif 1.5 <= score < 2.5:
+        level = "難しい"
+    elif 2.5 <= score < 3.5:
+        level = "やや難しい"
+    elif 3.5 <= score < 4.5:
+        level = "ふつう"
+    elif 4.5 <= score < 5.5:
+        level = "易しい"
+    elif 5.5 <= score < 6.5:
+        level = "超易しい"
+    else:
+        level = "判定不能"
+
+    return [score, level, buncho]
 
 def display_readability(user_input_text_A1, user_input_text_A2, user_input_text_B1, user_input_text_B2):
     data = []
+    company_A = user_input_text_A1 or 'A'  # A社のデフォルト名を設定
+    company_B = user_input_text_B1 or 'B'  # B社のデフォルト名を設定
+    
     if user_input_text_A2:
-        data_A = get_readability_data(user_input_text_A2, user_input_text_A1)
-        data.append(pd.Series(data_A, name=user_input_text_A1 or 'A'))
+        data_A = get_readability_data(user_input_text_A2, company_A)
+        if data_A:
+            data.append(pd.Series(data_A, name=company_A))
 
     if user_input_text_B2:
-        data_B = get_readability_data(user_input_text_B2, user_input_text_B1)
-        data.append(pd.Series(data_B, name=user_input_text_B1 or 'B'))
+        data_B = get_readability_data(user_input_text_B2, company_B)
+        if data_B:
+            data.append(pd.Series(data_B, name=company_B))
 
     if data:
         df = pd.DataFrame(data).T
         df.index = ['可読性スコア', '可読性レベル', '一文の語数']
-        st.write("可読性スコアとレベル",df)
+        st.write("可読性スコアとレベル", df)
 
 # A社の入力があり、B社の入力がない場合
 if user_input_text_A2 or user_input_text_B2:
@@ -339,17 +352,17 @@ if user_input_text_A2 or user_input_text_B2:
 
 if user_input_text_A1:
     # テキストがある場合は、そのテキストに"＋語種"を追加してサブヘッダーに設定
-    subheader_text_A1 = f"{user_input_text_A1}-語種"
+    subheader_text_A1 = f"{user_input_text_A1}-円グラフ"
 else:
     # テキストがない場合は、"A＋語種"としてサブヘッダーに設定
-    subheader_text_A1 = "A-語種"
+    subheader_text_A1 = "A-円グラフ"
 
 if user_input_text_B1:
     # テキストがある場合は、そのテキストに"＋語種"を追加してサブヘッダーに設定
-    subheader_text_B1 = f"{user_input_text_B1}-語種"
+    subheader_text_B1 = f"{user_input_text_B1}-円グラフ"
 else:
     # テキストがない場合は、"A＋語種"としてサブヘッダーに設定
-    subheader_text_B1 = "B-語種"
+    subheader_text_B1 = "B-円グラフ"
 
 if user_input_text_A2:
     # 語種の割合を計算
@@ -416,54 +429,59 @@ st.subheader("⑤　トーン")
 st.write("トーンは－1（超ネガティブ）から1（超ポジティブ）で計算されます。0は中立（ニュートラル）となります。 文章のトーンはどのくらいポジティブ（ネガティブ）でしょうか？")
 
 def display_tone_data(user_input_text_A1, user_input_text_A2, user_input_text_B1, user_input_text_B2):
-    # デフォルトの社名を設定
     company_A = user_input_text_A1 if user_input_text_A1 else "A"
     company_B = user_input_text_B1 if user_input_text_B1 else "B"
-    
-    # 結果を格納するデータフレームを初期化
+
     df_tone = pd.DataFrame(index=['トーンスコア', 'トーンレベル'])
     df_positive_words_A = pd.DataFrame()
     df_negative_words_A = pd.DataFrame()
     df_positive_words_B = pd.DataFrame()
     df_negative_words_B = pd.DataFrame()
 
-    # A社のデータを処理
     if user_input_text_A2:
         score_A, _, _, top_pwords_A, top_nwords_A = tone_score(user_input_text_A2)
-        evaluation_A = tone_eval(score_A)
-        df_tone[company_A] = [score_A, evaluation_A]
-        df_positive_words_A = pd.DataFrame({f"{company_A} ポジティブ単語": [word for word, _ in top_pwords_A],
-                                            f"{company_A} ポジティブ頻度": [freq for _, freq in top_pwords_A]})
-        df_negative_words_A = pd.DataFrame({f"{company_A} ネガティブ単語": [word for word, _ in top_nwords_A],
-                                            f"{company_A} ネガティブ頻度": [freq for _, freq in top_nwords_A]})
+        if score_A == "データなし":
+            st.error(f"{company_A}: データが不足しているため、トーンスコアを計算できません。")
+        else:
+            evaluation_A = tone_eval(score_A)
+            df_tone[company_A] = [score_A, evaluation_A]
+            df_positive_words_A = pd.DataFrame({f"{company_A} ポジティブ単語": [word for word, _ in top_pwords_A],
+                                                f"{company_A} ポジティブ頻度": [freq for _, freq in top_pwords_A]})
+            df_negative_words_A = pd.DataFrame({f"{company_A} ネガティブ単語": [word for word, _ in top_nwords_A],
+                                                f"{company_A} ネガティブ頻度": [freq for _, freq in top_nwords_A]})
         
-    # B社のデータを処理
     if user_input_text_B2:
         score_B, _, _, top_pwords_B, top_nwords_B = tone_score(user_input_text_B2)
-        evaluation_B = tone_eval(score_B)
-        df_tone[company_B] = [score_B, evaluation_B]
-        df_positive_words_B = pd.DataFrame({f"{company_B} ポジティブ単語": [word for word, _ in top_pwords_B],
-                                            f"{company_B} ポジティブ頻度": [freq for _, freq in top_pwords_B]})
-        df_negative_words_B = pd.DataFrame({f"{company_B} ネガティブ単語": [word for word, _ in top_nwords_B],
-                                            f"{company_B} ネガティブ頻度": [freq for _, freq in top_nwords_B]})
+        if score_B == "データなし":
+            st.error(f"{company_B}: データが不足しているため、トーンスコアを計算できません。")
+        else:
+            evaluation_B = tone_eval(score_B)
+            df_tone[company_B] = [score_B, evaluation_B]
+            df_positive_words_B = pd.DataFrame({f"{company_B} ポジティブ単語": [word for word, _ in top_pwords_B],
+                                                f"{company_B} ポジティブ頻度": [freq for _, freq in top_pwords_B]})
+            df_negative_words_B = pd.DataFrame({f"{company_B} ネガティブ単語": [word for word, _ in top_nwords_B],
+                                                f"{company_B} ネガティブ頻度": [freq for _, freq in top_nwords_B]})
 
-    # Streamlitでトーンスコアとレベルを表示
     if not df_tone.empty:
         st.write("トーンスコアとレベル", df_tone) 
-    
-    # 両方の企業のポジティブ単語データフレームがある場合、結合して表示
+
     if not df_positive_words_A.empty or not df_positive_words_B.empty:
         df_positive_words = pd.concat([df_positive_words_A, df_positive_words_B], axis=1)
-        st.write("ポジティブ単語と頻度", df_positive_words)
+        if df_positive_words.empty:
+            st.write("ポジティブな単語が見つかりませんでした。")
+        else:
+            st.write("ポジティブ単語と頻度", df_positive_words)
 
-    # 両方の企業のネガティブ単語データフレームがある場合、結合して表示
     if not df_negative_words_A.empty or not df_negative_words_B.empty:
         df_negative_words = pd.concat([df_negative_words_A, df_negative_words_B], axis=1)
-        st.write("ネガティブ単語と頻度", df_negative_words)
+        if df_negative_words.empty:
+            st.write("ネガティブな単語が見つかりませんでした。")
+        else:
+            st.write("ネガティブ単語と頻度", df_negative_words)
 
-# ユーザー入力に応じて関数を実行
 if user_input_text_A2 or user_input_text_B2:
     display_tone_data(user_input_text_A1, user_input_text_A2, user_input_text_B1, user_input_text_B2)
+    
 #%%
 # タイトルを設定
 st.subheader("⑥　類似度")
@@ -496,31 +514,41 @@ def evaluate_sim(cos_sim):
 company_A = user_input_text_A1 if user_input_text_A1 else "A"
 company_B = user_input_text_B1 if user_input_text_B1 else "B"
 
-# 両方のテキストが入力された場合、類似度を計算
-if user_input_text_A2 and user_input_text_B2:
-    # TF-IDFベクトルを計算
-    vectorizer = TfidfVectorizer()
-    tfidf_matrix = vectorizer.fit_transform([user_input_text_A2, user_input_text_B2])
+try:
+    # 両方のテキストが入力された場合、類似度を計算
+    if user_input_text_A2 and user_input_text_B2:
+        # TF-IDFベクトルを計算
+        vectorizer = TfidfVectorizer()
+        tfidf_matrix = vectorizer.fit_transform([user_input_text_A2, user_input_text_B2])
 
-    # コサイン類似度を計算
-    cos_sim = cosine_similarity(tfidf_matrix[0:1], tfidf_matrix[1:2])[0][0]
-    cos_sim = round(cos_sim, 3)
-    
-    # 類似度とそっくりレベルをDataFrameに保存
-    evaluation = evaluate_sim(cos_sim)
-    data = {
-        '類似度': [cos_sim],
-        'そっくりレベル': [evaluation]
-    }
-    df = pd.DataFrame(data)
-    
-    # DataFrameを転置
-    df_transposed = df.transpose()
-    df_transposed.columns = [f"{company_A}と{company_B}"]
-    
-    # 転置したDataFrameをst.writeで表示
-    st.write(df_transposed)
+        # コサイン類似度を計算
+        cos_sim = cosine_similarity(tfidf_matrix[0:1], tfidf_matrix[1:2])[0][0]
+        cos_sim = round(cos_sim, 3)
 
+        # 類似度とそっくりレベルをDataFrameに保存
+        evaluation = evaluate_sim(cos_sim)
+        data = {
+            '類似度': [cos_sim],
+            'そっくりレベル': [evaluation]
+        }
+        df = pd.DataFrame(data)
+
+        # DataFrameを転置
+        df_transposed = df.transpose()
+        df_transposed.columns = [f"{company_A}と{company_B}"]
+
+        # 転置したDataFrameをst.writeで表示
+        st.write(df_transposed)
+        
+    # 片方のテキストのみが入力された場合
+    elif user_input_text_A2 or user_input_text_B2:
+        st.error('両方のテキストデータを入力してください。')
+        
+except ValueError as e:
+    if 'empty vocabulary' in str(e):
+        st.error('入力されたテキストが短すぎるか、ストップワードのみ含まれています。もっと長いテキストを入力してください。')
+    else:
+        raise  # その他のValueErrorはそのまま再発生させる
 
 #%%
 st.title('おわりに')
@@ -532,3 +560,4 @@ st.write("青山学院大学　経営学部　矢澤憲一研究室")
 st.write("【免責事項】")
 st.write("このウェブサイトおよびそのコンテンツは、一般的な情報提供を目的としています。このウェブサイトの情報を使用または適用することによって生じるいかなる利益、損失、損害について、当ウェブサイトおよびその運営者は一切の責任を負いません。情報の正確性、完全性、時宜性、適切性についても、一切保証するものではありません。")
 
+#%%
