@@ -20,7 +20,7 @@ from networkx_1 import make_network_with_jaccard_enhanced
 from readability_1 import readability,calculate_gosyu_ratios,identify_gosyu
 from tone import tone_score,tone_eval
 
-
+st.write("電卓ネコシリーズ第１弾！")
 st.title("ネコでも使える！会計テキストマイニング") # タイトル
 
 image = Image.open("title.png") 
